@@ -147,10 +147,9 @@
   }
 
   function stepHtml(p, st, ctx) {
-    var done = CM.progress.has(p.id, st.key);
     var prefix = ctx === 'guided' ? 'g-' : '';
-    var h = '<li class="step' + (done ? ' is-done' : '') + '" data-step-key="' + st.key + '"' + (ctx === 'full' ? ' id="sec-' + st.anchor + '"' : '') + '>';
-    h += '<div class="step-num" aria-hidden="true"><span>' + st.number + '</span>' + icon('check') + '</div>';
+    var h = '<li class="step"' + (ctx === 'full' ? ' id="sec-' + st.anchor + '"' : '') + '>';
+    h += '<div class="step-num" aria-hidden="true"><span>' + st.number + '</span></div>';
     h += '<div class="step-body"><p class="step-label">Paso ' + st.number + '</p><div class="step-text">' + CM.md(st.t) + '</div>';
     if (st.v && st.v.length) h += '<div class="vals">' + st.v.map(valueHtml).join('') + '</div>';
     if (st.compose || st.copyAll) {
@@ -165,8 +164,6 @@
     if (st.pend) h += noteHtml('pending', st.pend);
     if (st.note) h += noteHtml('info', st.note);
     h += '</div>';
-    h += '<label class="step-check"><input type="checkbox" class="cbox" data-step="' + st.key + '"' + (done ? ' checked' : '') +
-      ' aria-label="Marcar paso ' + st.number + ' como completado"><span aria-hidden="true">Marcar como completado</span></label>';
     return h + '</li>';
   }
 
@@ -236,20 +233,14 @@
     return p.systems.map(function (s) { return '<span class="tag">' + esc(s) + '</span>'; }).join('');
   }
 
-  function progressBar(pct, cls) {
-    return '<div class="progress' + (cls ? ' ' + cls : '') + '"><span style="width:' + pct + '%"></span></div>';
-  }
-
   function procCard(p) {
     var cat = CM.catById[p.category];
-    var pct = CM.progress.pct(p);
     return '<a class="card" href="#/procedimientos/' + p.id + '">' +
       '<div class="card-top"><span class="card-icon">' + icon(p.icon) + '</span>' + icon('arrow-right', 'card-arrow') + '</div>' +
       '<div><div class="card-cat">' + esc(cat.name) + '</div><div class="card-title">' + esc(CM.procTitle(p)) + '</div></div>' +
       '<p class="card-desc">' + esc(p.summary) + '</p>' +
       '<div class="card-meta">' + (p.frequency ? '<span class="tag tag--red">' + icon('clock') + esc(p.frequency.split(' · ')[0]) + '</span>' : '') +
       '<span class="tag">' + p.totalSteps + ' pasos</span></div>' +
-      (pct > 0 ? '<div class="card-progress">' + progressBar(pct) + '<span>' + pct + ' %</span></div>' : '') +
       '</a>';
   }
 
@@ -261,14 +252,12 @@
   }
 
   function procRow(p) {
-    var pct = CM.progress.pct(p);
     return '<li class="proc-row" data-row="' + p.id + '">' +
       '<span class="card-icon">' + icon(p.icon) + '</span>' +
       '<div class="proc-row-main"><a class="proc-row-title" href="#/procedimientos/' + p.id + '">' + esc(p.title) + '</a>' +
       '<p class="proc-row-desc">' + esc(p.summary) + '</p>' +
       '<div class="proc-row-meta">' + (p.frequency ? '<span class="tag tag--red">' + icon('clock') + esc(p.frequency) + '</span>' : '') + sysTags(p) +
       '<span class="tag tag--outline">' + p.phases.length + ' fase' + (p.phases.length === 1 ? '' : 's') + ' · ' + p.totalSteps + ' pasos</span></div></div>' +
-      '<div class="proc-row-progress">' + progressBar(pct) + '<span>' + (pct ? pct + ' % completado' : 'Sin iniciar') + '</span></div>' +
       favButton(p, true) + '</li>';
   }
 
@@ -287,14 +276,15 @@
         '<span class="card-body"><span class="card-title">' + esc(p.title) + '</span><span class="card-desc">' + esc(p.summary) + '</span></span>' + icon('arrow-right', 'card-arrow') + '</a>';
     }).join('') +
       '<a class="card card--wide" href="#/directorio"><span class="card-icon">' + icon('link') + '</span>' +
-      '<span class="card-body"><span class="card-title">Directorio de enlaces</span><span class="card-desc">Sistemas, archivos, carpetas y correos en un solo lugar.</span></span>' + icon('arrow-right', 'card-arrow') + '</a>';
+      '<span class="card-body"><span class="card-title">Directorio de enlaces</span><span class="card-desc">Sistemas, archivos, carpetas y correos en un solo lugar.</span></span>' + icon('arrow-right', 'card-arrow') + '</a>' +
+      '<a class="card card--wide" href="#/zonas"><span class="card-icon">' + icon('pin') + '</span>' +
+      '<span class="card-body"><span class="card-title">Distribución de zonas</span><span class="card-desc">Sucursales por zona: Centro, Noroeste, Noreste, Occidente y Sureste.</span></span>' + icon('arrow-right', 'card-arrow') + '</a>';
 
     var favs = CM.favs.all();
     var favHtml = favs.length
       ? '<ul class="mini-list">' + favs.map(function (id) {
         var p = CM.procById[id];
-        var pct = CM.progress.pct(p);
-        return '<li class="mini-item"><a href="#/procedimientos/' + id + '">' + esc(p.title) + '<span class="mini-sub">' + esc(CM.catById[p.category].name) + '</span></a>' + progressBar(pct) + '<span class="mini-pct">' + pct + ' %</span></li>';
+        return '<li class="mini-item"><a href="#/procedimientos/' + id + '">' + esc(p.title) + '<span class="mini-sub">' + esc(CM.catById[p.category].name) + '</span></a></li>';
       }).join('') + '</ul>'
       : '<div class="empty"><strong>Aún no tienes favoritos</strong><span>Abre un procedimiento y presiona “Agregar a favoritos” para tenerlo a la mano aquí.</span></div>';
 
@@ -302,10 +292,9 @@
     var histHtml = hist.length
       ? '<ul class="mini-list">' + hist.map(function (h) {
         var p = CM.procById[h.id];
-        var pct = CM.progress.pct(p);
-        return '<li class="mini-item"><a href="#/procedimientos/' + h.id + '">' + esc(p.title) + '<span class="mini-sub">' + esc(CM.timeAgo(h.ts)) + '</span></a>' + progressBar(pct) + '<span class="mini-pct">' + pct + ' %</span></li>';
+        return '<li class="mini-item"><a href="#/procedimientos/' + h.id + '">' + esc(p.title) + '<span class="mini-sub">' + esc(CM.timeAgo(h.ts)) + '</span></a></li>';
       }).join('') + '</ul>'
-      : '<div class="empty"><strong>Sin consultas recientes</strong><span>Los últimos procedimientos que abras aparecerán aquí, con su avance.</span></div>';
+      : '<div class="empty"><strong>Sin consultas recientes</strong><span>Los últimos procedimientos que abras aparecerán aquí.</span></div>';
 
     return '<div data-page="home">' +
       '<section class="hero" aria-labelledby="home-title"><span class="hero-deco" aria-hidden="true"></span>' +
@@ -425,6 +414,14 @@
       '<section class="section"><div class="section-head"><h2 class="section-title">Procedimientos que usan ' + esc(s.name) + '</h2></div><div class="card-grid">' + procs + '</div></section></div>';
   }
 
+  function viewZones() {
+    return '<div data-page="zones">' + crumbs([{ label: 'Inicio', href: '#/' }, { label: 'Recursos', href: '#/categoria/recursos' }, { label: 'Distribución de zonas' }]) +
+      '<header class="page-head"><span class="eyebrow">' + icon('pin') + 'Recursos</span><h1>Distribución de zonas</h1>' +
+      '<p class="lead">Distribución documentada de sucursales por zona. Escribe una sucursal para conocer su zona.</p></header>' +
+      zonesHtml('r-') +
+      '<p class="related">Se usa en: ' + procedureLinks(['junta-trimestral']) + '</p></div>';
+  }
+
   function faqHtml(f) {
     return '<details class="acc"><summary>' + esc(f.q) + icon('chevron-down') + '</summary><div class="acc-body"><p>' + CM.md(f.a) + '</p>' +
       (f.v && f.v.length ? '<div class="vals">' + f.v.map(valueHtml).join('') + '</div>' : '') + '</div></details>';
@@ -436,8 +433,7 @@
     if (p.notices && p.notices.length) items.push('<li><a href="#/procedimientos/' + p.id + '/avisos" data-rail="avisos"><span class="rail-num rail-num--icon">' + icon('alert', 'icon--sm') + '</span><span class="rail-label">Avisos importantes</span></a></li>');
     p.phases.forEach(function (ph) {
       items.push('<li><a href="#/procedimientos/' + p.id + '/' + ph.anchor + '" data-rail="' + ph.anchor + '" data-rail-phase="' + ph.index + '">' +
-        '<span class="rail-num">' + ph.number + '</span><span class="rail-label">' + esc(ph.short || ph.title) + '</span>' +
-        '<span class="rail-count" data-phase-count="' + ph.index + '"></span></a></li>');
+        '<span class="rail-num">' + ph.number + '</span><span class="rail-label">' + esc(ph.short || ph.title) + '</span></a></li>');
     });
     items.push('<li class="rail-sep" role="presentation"></li>');
     items.push('<li><a href="#/procedimientos/' + p.id + '/verificacion" data-rail="verificacion"><span class="rail-num rail-num--icon">' + icon('check', 'icon--sm') + '</span><span class="rail-label">Verificación final</span></a></li>');
@@ -445,11 +441,9 @@
     if (p.faq && p.faq.length) items.push('<li><a href="#/procedimientos/' + p.id + '/faq" data-rail="faq"><span class="rail-num rail-num--icon">' + icon('help', 'icon--sm') + '</span><span class="rail-label">Preguntas frecuentes</span></a></li>');
     var list = '<ul class="rail-list">' + items.join('') + '</ul>';
     if (mobile) {
-      return '<details class="acc toc-mobile"><summary>' + icon('list', 'icon--sm') + 'Índice: ' + p.phases.length + ' fase' + (p.phases.length === 1 ? '' : 's') + ' · ' + p.totalSteps + ' pasos' + icon('chevron-down') + '</summary><div class="acc-body">' +
-        '<div class="rail-progress"><div class="progress" data-progress-wrap><span data-progress-bar></span></div><span data-progress-short></span></div>' + list + '</div></details>';
+      return '<details class="acc toc-mobile"><summary>' + icon('list', 'icon--sm') + 'Índice: ' + p.phases.length + ' fase' + (p.phases.length === 1 ? '' : 's') + ' · ' + p.totalSteps + ' pasos' + icon('chevron-down') + '</summary><div class="acc-body">' + list + '</div></details>';
     }
-    return '<aside class="proc-rail" aria-label="Índice del procedimiento"><p class="rail-title">En esta página</p>' +
-      '<div class="rail-progress"><div class="progress" data-progress-wrap><span data-progress-bar></span></div><span data-progress-short></span></div>' + list + '</aside>';
+    return '<aside class="proc-rail" aria-label="Índice del procedimiento"><p class="rail-title">En esta página</p>' + list + '</aside>';
   }
 
   function viewProcedure(id) {
@@ -459,7 +453,6 @@
     var idx = D.order.indexOf(p.id);
     var prev = idx > 0 ? CM.procById[D.order[idx - 1]] : null;
     var next = idx < D.order.length - 1 ? CM.procById[D.order[idx + 1]] : null;
-    var checks = CM.checks.get(p.id);
 
     var meta = '<dl class="proc-meta">' +
       '<div><dt>Categoría</dt><dd>' + esc(cat.name) + '</dd></div>' +
@@ -471,22 +464,16 @@
       '<span class="eyebrow">' + icon(cat.icon) + esc(cat.name) + '</span>' +
       '<h1>' + esc(p.title) + '</h1>' +
       '<p class="proc-objective"><strong>Objetivo:</strong> ' + esc(p.objective) + '</p>' + meta +
-      '<div class="progress-block"><div class="progress progress--lg" role="progressbar" aria-label="Progreso del procedimiento" aria-valuemin="0" aria-valuemax="100" data-progress-wrap><span data-progress-bar></span></div>' +
-      '<div class="progress-text"><span data-progress-text></span><span data-progress-pct></span></div></div>' +
       '<div class="proc-toolbar">' +
       '<div class="segmented" role="group" aria-label="Modo de lectura">' +
       '<button type="button" data-mode="full" aria-pressed="' + !guided + '">' + icon('scroll') + 'Vista completa</button>' +
       '<button type="button" data-mode="guided" aria-pressed="' + guided + '">' + icon('steps') + 'Vista guiada</button></div>' +
       '<span class="spacer"></span>' + favButton(p) +
-      '<button type="button" class="btn" data-print>' + icon('printer') + '<span>Imprimir procedimiento</span></button>' +
-      '<button type="button" class="btn btn--ghost" data-reset>' + icon('reset') + '<span>Reiniciar progreso</span></button>' +
       '</div></header>';
 
     var req = '<section class="block" id="sec-requisitos" data-spy="requisitos"><h2 class="block-title">' + icon('checklist') + 'Antes de comenzar</h2>' +
-      '<ul class="check-list">' + p.requirements.map(function (r, i) {
-        var key = 'req:' + i;
-        var on = checks.indexOf(key) !== -1;
-        return '<li><label class="check-item' + (on ? ' is-checked' : '') + '"><input type="checkbox" class="cbox" data-check="' + key + '"' + (on ? ' checked' : '') + '><span>' + CM.md(r) + '</span></label></li>';
+      '<ul class="check-list">' + p.requirements.map(function (r) {
+        return '<li class="check-item"><span>' + CM.md(r) + '</span></li>';
       }).join('') + '</ul></section>';
 
     var notices = p.notices && p.notices.length
@@ -498,8 +485,7 @@
       p.phases.map(function (ph) {
         return '<section class="phase" id="sec-' + ph.anchor + '" data-spy="' + ph.anchor + '" aria-labelledby="t-' + ph.anchor + '">' +
           '<div class="phase-head"><span class="phase-num" aria-hidden="true">' + ph.number + '</span>' +
-          '<h3 class="phase-title" id="t-' + ph.anchor + '"><span class="sr-only">Fase ' + ph.number + ': </span>' + esc(ph.title) + '</h3>' +
-          '<span class="phase-count" data-phase-count="' + ph.index + '"></span></div>' +
+          '<h3 class="phase-title" id="t-' + ph.anchor + '"><span class="sr-only">Fase ' + ph.number + ': </span>' + esc(ph.title) + '</h3></div>' +
           '<ol class="steps">' + ph.steps.map(function (st) { return stepHtml(p, st, 'full'); }).join('') + '</ol></section>';
       }).join('') + '</section>';
 
@@ -507,10 +493,8 @@
       '<div class="guided-card" data-guided></div><p class="guided-hint">Usa las flechas ← y → del teclado para moverte entre pasos.</p></section>';
 
     var verif = '<section class="block" id="sec-verificacion" data-spy="verificacion"><h2 class="block-title">' + icon('check') + 'Verificación final</h2>' +
-      '<ul class="check-list">' + p.verification.map(function (v, i) {
-        var key = 'ver:' + i;
-        var on = checks.indexOf(key) !== -1;
-        return '<li><label class="check-item' + (on ? ' is-checked' : '') + '"><input type="checkbox" class="cbox" data-check="' + key + '"' + (on ? ' checked' : '') + '><span>' + CM.md(v) + '</span></label></li>';
+      '<ul class="check-list">' + p.verification.map(function (v) {
+        return '<li class="check-item"><span>' + CM.md(v) + '</span></li>';
       }).join('') + '</ul></section>';
 
     var sysItems = p.systems.map(function (n) { return SYS_BY_NAME[n]; }).filter(Boolean);
@@ -557,46 +541,8 @@
     return el ? CM.procById[el.getAttribute('data-proc')] : null;
   }
 
-  function updateProgress(p) {
-    var done = CM.progress.get(p.id);
-    var count = p.stepList.filter(function (s) { return done.indexOf(s.key) !== -1; }).length;
-    var pct = p.totalSteps ? Math.round(count / p.totalSteps * 100) : 0;
-    Array.prototype.forEach.call(view.querySelectorAll('[data-progress-bar]'), function (el) { el.style.width = pct + '%'; });
-    Array.prototype.forEach.call(view.querySelectorAll('[data-progress-wrap]'), function (el) {
-      if (el.getAttribute('role') === 'progressbar') {
-        el.setAttribute('aria-valuenow', String(pct));
-        el.setAttribute('aria-valuetext', count + ' de ' + p.totalSteps + ' pasos completados');
-      }
-    });
-    Array.prototype.forEach.call(view.querySelectorAll('[data-progress-text]'), function (el) {
-      el.innerHTML = '<strong>' + count + ' de ' + p.totalSteps + '</strong> pasos completados';
-    });
-    Array.prototype.forEach.call(view.querySelectorAll('[data-progress-pct]'), function (el) { el.textContent = pct + ' %'; });
-    Array.prototype.forEach.call(view.querySelectorAll('[data-progress-short]'), function (el) { el.textContent = count + ' de ' + p.totalSteps + ' pasos · ' + pct + ' %'; });
-    p.phases.forEach(function (ph) {
-      var c = ph.steps.filter(function (s) { return done.indexOf(s.key) !== -1; }).length;
-      Array.prototype.forEach.call(view.querySelectorAll('[data-phase-count="' + ph.index + '"]'), function (el) { el.textContent = c + '/' + ph.steps.length; });
-      Array.prototype.forEach.call(view.querySelectorAll('[data-rail-phase="' + ph.index + '"]'), function (el) { el.classList.toggle('is-complete', c === ph.steps.length); });
-    });
-    Array.prototype.forEach.call(view.querySelectorAll('[data-step-key]'), function (el) {
-      el.classList.toggle('is-done', done.indexOf(el.getAttribute('data-step-key')) !== -1);
-    });
-    Array.prototype.forEach.call(view.querySelectorAll('[data-step]'), function (el) {
-      el.checked = done.indexOf(el.getAttribute('data-step')) !== -1;
-    });
-    Array.prototype.forEach.call(view.querySelectorAll('[data-guided-go]'), function (el) {
-      var st = p.stepList[+el.getAttribute('data-guided-go')];
-      el.classList.toggle('is-done', done.indexOf(st.key) !== -1);
-    });
-  }
-
   function guidedIndex(p) {
-    if (CM.state.guided[p.id] == null) {
-      var done = CM.progress.get(p.id);
-      var first = 0;
-      for (var i = 0; i < p.stepList.length; i++) { if (done.indexOf(p.stepList[i].key) === -1) { first = i; break; } }
-      CM.state.guided[p.id] = first;
-    }
+    if (CM.state.guided[p.id] == null) CM.state.guided[p.id] = 0;
     return CM.state.guided[p.id];
   }
 
@@ -608,7 +554,6 @@
     var st = p.stepList[i];
     var ph = st.phase;
     var last = i === p.stepList.length - 1;
-    var done = CM.progress.has(p.id, st.key);
     box.innerHTML =
       '<div class="guided-top"><span class="guided-phase">Fase ' + ph.number + ' de ' + p.phases.length + ' <span>· ' + esc(ph.title) + '</span></span>' +
       '<span class="guided-count">Paso ' + st.number + ' · ' + (i + 1) + ' de ' + p.stepList.length + '</span></div>' +
@@ -618,15 +563,10 @@
       }).join('') + '</div>' +
       '<div class="guided-nav">' +
       '<button type="button" class="btn" data-guided-nav="prev"' + (i === 0 ? ' disabled' : '') + '>' + icon('chevron-left') + '<span>Anterior</span></button>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">' +
       (last
-        ? '<a class="btn" href="#/procedimientos/' + p.id + '/verificacion">' + icon('check') + '<span>Ir a verificación final</span></a>'
-        : '<button type="button" class="btn" data-guided-nav="next"><span>Siguiente</span>' + icon('chevron-right') + '</button>') +
-      (done
-        ? ''
-        : '<button type="button" class="btn btn--primary" data-guided-nav="complete">' + icon('check') + '<span>' + (last ? 'Completar paso' : 'Completar y seguir') + '</span></button>') +
-      '</div></div>';
-    updateProgress(p);
+        ? '<a class="btn btn--primary" href="#/procedimientos/' + p.id + '/verificacion">' + icon('check') + '<span>Ir a verificación final</span></a>'
+        : '<button type="button" class="btn btn--primary" data-guided-nav="next"><span>Siguiente</span>' + icon('chevron-right') + '</button>') +
+      '</div>';
     var zones = box.querySelector('[data-zones]');
     if (zones) updateZones(zones, zones.querySelector('[data-zone-input]').value);
   }
@@ -766,6 +706,7 @@
       case 'favorites': return 'Favoritos' + SUFFIX;
       case 'tools': return 'Accesos y herramientas' + SUFFIX;
       case 'directory': return 'Directorio de enlaces' + SUFFIX;
+      case 'zones': return 'Distribución de zonas' + SUFFIX;
       case 'system': return 'Acceso a ' + CM.sysById[r.id].name + SUFFIX;
       case 'procedure': return CM.procById[r.id].title + SUFFIX;
       default: return 'Página no encontrada' + SUFFIX;
@@ -781,6 +722,7 @@
       case 'favorites': html = viewFavorites(); break;
       case 'tools': html = viewTools(); break;
       case 'directory': html = viewDirectory(); break;
+      case 'zones': html = viewZones(); break;
       case 'system': html = viewSystem(r.id); break;
       case 'procedure': CM.history.push(r.id); html = viewProcedure(r.id); break;
       default: html = viewNotFound();
@@ -799,7 +741,6 @@
     if (r.view === 'directory') filterDirectory();
     if (r.view === 'procedure') {
       var p = CM.procById[r.id];
-      updateProgress(p);
       if (view.querySelector('.proc.is-guided')) renderGuided(p);
     }
 
@@ -845,21 +786,6 @@
       return;
     }
 
-    if (t.closest('[data-print]')) { window.print(); return; }
-
-    if (t.closest('[data-reset]')) {
-      var rp = currentProc();
-      if (!rp) return;
-      if (!window.confirm('¿Reiniciar el progreso de “' + rp.title + '”? Se desmarcarán todos sus pasos y listas en este navegador.')) return;
-      CM.progress.reset(rp.id);
-      CM.state.guided[rp.id] = 0;
-      Array.prototype.forEach.call(view.querySelectorAll('[data-check]'), function (c) { c.checked = false; c.closest('.check-item').classList.remove('is-checked'); });
-      updateProgress(rp);
-      if (view.querySelector('.proc.is-guided')) renderGuided(rp);
-      CM.toast('Progreso reiniciado');
-      return;
-    }
-
     var mode = t.closest('[data-mode]');
     if (mode) { var mp = currentProc(); if (mp) setMode(mp, mode.getAttribute('data-mode')); return; }
 
@@ -868,14 +794,11 @@
       var gp = currentProc();
       var i = guidedIndex(gp);
       var action = gnav.getAttribute('data-guided-nav');
-      if (action === 'complete') {
-        CM.progress.toggle(gp.id, gp.stepList[i].key, true);
-        if (i < gp.stepList.length - 1) i++;
-      } else if (action === 'next') i = Math.min(gp.stepList.length - 1, i + 1);
+      if (action === 'next') i = Math.min(gp.stepList.length - 1, i + 1);
       else if (action === 'prev') i = Math.max(0, i - 1);
       setGuided(gp, i, true);
       markRail(gp.stepList[i].phase.anchor);
-      var focusTarget = view.querySelector('[data-guided-nav="' + (action === 'prev' ? 'prev' : 'next') + '"]') || view.querySelector('[data-guided-nav="complete"]') || view.querySelector('[data-guided-nav="prev"]');
+      var focusTarget = view.querySelector('[data-guided-nav="' + action + '"]') || view.querySelector('[data-guided-nav]:not([disabled])');
       if (focusTarget && !focusTarget.disabled) focusTarget.focus({ preventScroll: true });
       return;
     }
@@ -903,23 +826,6 @@
     if (term) { CM.search.open(term.getAttribute('data-search-term')); return; }
 
     if (t.closest('[data-open-search]')) { CM.search.open(); return; }
-  }
-
-  function onChange(ev) {
-    var t = ev.target;
-    var p = currentProc();
-    if (t.matches('[data-step]') && p) {
-      CM.progress.toggle(p.id, t.getAttribute('data-step'), t.checked);
-      updateProgress(p);
-      if (t.closest('[data-guided]')) renderGuided(p);
-      var c = CM.progress.count(p);
-      if (t.checked && c === p.totalSteps) CM.toast('¡Todos los pasos completados! Revisa la verificación final.');
-      return;
-    }
-    if (t.matches('[data-check]') && p) {
-      CM.checks.toggle(p.id, t.getAttribute('data-check'), t.checked);
-      t.closest('.check-item').classList.toggle('is-checked', t.checked);
-    }
   }
 
   function onInput(ev) {
@@ -957,7 +863,6 @@
   function init() {
     view = document.getElementById('view');
     view.addEventListener('click', onClick);
-    view.addEventListener('change', onChange);
     view.addEventListener('input', onInput);
     document.addEventListener('keydown', onKey);
     CM.nav.init();

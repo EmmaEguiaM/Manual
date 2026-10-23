@@ -27,6 +27,7 @@
       case 'favoritos': r.view = 'favorites'; return r;
       case 'herramientas': r.view = 'tools'; return r;
       case 'directorio': r.view = 'directory'; r.anchor = parts[1] || null; return r;
+      case 'zonas': r.view = 'zones'; return r;
       case 'sistemas':
         r.view = CM.sysById[parts[1]] && CM.sysById[parts[1]].page ? 'system' : 'notfound';
         r.id = parts[1];

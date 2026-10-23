@@ -15,6 +15,7 @@
 
   var U = {
     crm: 'https://ecrmconstrumac.eetcld.com/',
+    panjiva: 'https://es.panjiva.com/account/login',
     extend: 'https://conerp.eetcld.com:810/infor/',
     portales: 'https://construmac-my.sharepoint.com/:x:/p/ajimenezm/IQDJukJN3z4DTYElCq67ELuZAY5BRkxHVj79r2rh1NbM0Tg?e=3p1RGB',
     reporte: 'https://construmac-my.sharepoint.com/:x:/p/ajimenezm/IQB9sm1KlCkjS7dTbFCw8wobASxvFiHwt2UlOcvsxPv91MA?e=2IacuN',
@@ -102,7 +103,7 @@
     },
     {
       id: 'gastos-mkt', name: 'Gastos MKT.xlsx', type: 'excel', url: U.gastos, path: P.gastos, pathLabel: 'Carpeta que lo contiene',
-      description: 'Registro de gastos: proveedor, forma de pago, cuenta contable, rubro, concepto y número de lote.',
+      description: 'Registro de gastos: proveedor, forma de pago, cuenta contable, rubro, concepto y número de lote. En su pestaña “Prorrateo” se captura el gasto sin IVA y el prorrateo se calcula automáticamente.',
       procs: ['facturas']
     },
     {
@@ -168,9 +169,8 @@
       faq: [{ q: '¿Qué hago si Extend no abre?', a: 'Ábrelo en una pestaña privada o ventana de incógnito. El manual indica que de otra forma no abre.' }]
     },
     {
-      id: 'panjiva', name: 'Panjiva', kind: 'Sistema web', url: null, icon: 'globe', page: false,
+      id: 'panjiva', name: 'Panjiva', kind: 'Sistema web', url: U.panjiva, icon: 'globe', page: false,
       description: 'Consulta de importaciones por clave arancelaria para el Market Share.',
-      pending: 'URL no proporcionada en el manual. Consulta la pestaña “Portales” de Portales MKT.xlsx.',
       procs: ['market-share']
     },
     {
@@ -423,7 +423,6 @@
         'Acceso a la carpeta “Market Share”.'
       ],
       notices: [
-        { type: 'pending', text: 'El manual no proporciona la URL de Panjiva. Consúltala en la pestaña “Portales” de Portales MKT.xlsx.' },
         { type: 'warn', text: 'Antes de enviar una exportación a un correo externo (Gmail), confirma que su uso esté autorizado por la empresa.' }
       ],
       resources: ['portales-mkt', 'carpeta-market-share'],
@@ -431,11 +430,7 @@
         {
           title: 'Acceso a Panjiva',
           steps: [
-            {
-              t: 'Abrir el navegador web y localizar el acceso a Panjiva en la pestaña **Portales** de Portales MKT.xlsx:',
-              v: [url('Portales MKT.xlsx', U.portales)],
-              pend: 'El manual no proporciona la URL específica de Panjiva.'
-            },
+            { t: 'Abrir el navegador web e ingresar a Panjiva:', v: [url('Panjiva', U.panjiva)] },
             { t: 'Iniciar sesión en Panjiva con la cuenta corporativa autorizada.', note: NO_PASSWORD }
           ]
         },
@@ -478,7 +473,7 @@
       ],
       faq: [
         { q: '¿Por qué se descartan los registros de subasta?', a: 'Porque corresponden a equipo usado y el análisis no aplica para equipo usado.' },
-        { q: '¿Cuál es la URL de Panjiva?', a: 'No viene en el manual. Consulta la pestaña “Portales” de Portales MKT.xlsx.' }
+        { q: '¿Cuál es la URL de Panjiva?', a: 'https://es.panjiva.com/account/login', v: [url('Panjiva', U.panjiva)] }
       ],
       source: [
         'Iniciar sesión > Search > Búsqueda Avanzada > Poner clave arancelaria en “company or product name” > Especificar fecha > Search > Bajar hasta “Export Results” > Download File > En caso de ser muchos datos, poner un correo Gmail para que se exporte, ya que no llegan al correo institucional.',
@@ -777,7 +772,7 @@
       systems: ['Extend', 'Excel', 'Correo', 'SharePoint'],
       objective: 'Enviar los comprobantes, registrar el gasto en Excel, capturar la transacción CFG en Extend con su prorrateo, validar, notificar el cargo y archivar el PDF y el XML.',
       summary: 'Envío de PDF/XML, Gastos MKT, transacción CFG con prorrateo, notificación y archivo.',
-      keywords: ['factura', 'facturas', 'gastos', 'gasto', 'CFG', '1017', 'American Express', 'folio fiscal', 'prorrateo', 'dimensión', '010 | 11 | VAR | OTH', '010 | 31 | VAR | OTH', 'Transaction Line', 'número de lote', 'lote', 'MAEQ', 'GAGA', 'XML', 'PDF', 'resguardo digital', 'Líneas Simple OCC', 'publicidad', 'cuenta contable', 'Diferencias redondeo', 'Gastos MKT', 'Partner proveedor', 'Transacciones', 'Extend'],
+      keywords: ['factura', 'facturas', 'gastos', 'gasto', 'CFG', '1017', 'American Express', 'folio fiscal', 'prorrateo', 'dimensión', '010 | 11 | VAR | OTH', '010 | 31 | VAR | OTH', 'Transaction Line', 'número de lote', 'lote', 'MAEQ', 'GAGA', 'XML', 'PDF', 'resguardo digital', 'Líneas Simple OCC', 'publicidad', 'cuenta contable', 'Diferencias redondeo', 'Gastos MKT', 'pestaña Prorrateo', 'sin IVA', 'IVA', 'Partner proveedor', 'Transacciones', 'Extend'],
       requirements: [
         'PDF de la factura.',
         'XML de la factura.',
@@ -787,7 +782,6 @@
       notices: [
         { type: 'warn', text: 'El código `1017` corresponde a American Express en el caso documentado. No lo uses para otros proveedores.' },
         { type: 'warn', text: 'Si “Diferencias redondeo” no muestra 0, revisa la información y los montos antes de guardar. No hagas ajustes contables no documentados.' },
-        { type: 'pending', text: 'El manual no indica dónde se calcula el prorrateo ni la proporción entre las dimensiones 11 y 31.' },
         { type: 'pending', text: 'Confirmar la relación exacta entre el campo “Regularizar diferencias de cambio” y el tipo de impuesto de la factura.' }
       ],
       resources: ['gastos-mkt', 'carpeta-gastos', 'carpeta-facturas', 'portales-mkt'],
@@ -816,7 +810,9 @@
             { t: 'Abrir el archivo **Gastos MKT.xlsx**:', v: [url('Gastos MKT.xlsx', U.gastos)] },
             { t: 'Registrar y llenar los datos de la factura.' },
             { t: 'Usar los mismos rubros para **proveedor**, **forma de pago**, **cuenta contable** y **rubro**, para poder filtrar de mejor forma.' },
-            { t: 'Identificar el **concepto** registrado en el Excel: se vuelve a usar como número de lote, referencia, en el correo de notificación y como nombre de los archivos.' }
+            { t: 'Identificar el **concepto** registrado en el Excel: se vuelve a usar como número de lote, referencia, en el correo de notificación y como nombre de los archivos.' },
+            { t: 'En Gastos MKT.xlsx, abrir la pestaña **Prorrateo**.' },
+            { t: 'Capturar el gasto sin IVA. El prorrateo se calcula automáticamente en esa pestaña.', note: 'Los montos del prorrateo se capturan después en el campo “Importe” de Extend (fase 6).' }
           ]
         },
         {
@@ -864,12 +860,12 @@
           steps: [
             { t: 'En **Dimensión**, capturar la primera dimensión del prorrateo:', v: [code('Dimensión 1', '010 | 11 | VAR | OTH', 'Copiar dimensión 1')] },
             { t: 'En **Regularizar diferencias de cambio**, poner el tipo de impuesto aplicado en la factura.', pend: 'Confirmar la relación exacta entre este campo y el tipo de impuesto. Se conserva tal como lo indica el manual.' },
-            { t: 'En **Importe**, poner el primer monto que aparece al prorratear.', pend: 'El manual no indica dónde se calcula el prorrateo.' },
+            { t: 'En **Importe**, poner el primer monto que aparece al prorratear en la pestaña **Prorrateo** de Gastos MKT.xlsx.' },
             { t: 'Verificar que el impuesto se haya llenado solo.' },
             { t: 'Duplicar la hoja (línea).' },
             { t: 'Comprobar que arriba, en **Documento/Línea**, aparezca CFG, un código y después **2**.' },
             { t: 'En la segunda línea, cambiar únicamente la **Dimensión** a:', v: [code('Dimensión 2', '010 | 31 | VAR | OTH', 'Copiar dimensión 2')] },
-            { t: 'En **Importe**, poner el segundo monto del prorrateo.' },
+            { t: 'En **Importe**, poner el segundo monto del prorrateo (pestaña **Prorrateo** de Gastos MKT.xlsx).' },
             { t: 'Comprobar que **Diferencias redondeo** muestre `0`.', warn: 'Si no es 0, revisa la información y los montos antes de guardar. No hagas ajustes contables para forzar el cuadre.' }
           ]
         },
@@ -910,6 +906,7 @@
       verification: [
         'PDF y XML enviados a los dos correos de recepción.',
         'Gasto registrado en Gastos MKT.xlsx.',
+        'Gasto sin IVA capturado en la pestaña “Prorrateo” de Gastos MKT.xlsx.',
         'Proveedor, rubro, forma de pago y cuenta contable consistentes.',
         'Extend abierto y transacción CFG creada.',
         'Proveedor seleccionado y validado.',
@@ -925,6 +922,7 @@
       ],
       faq: [
         { q: '¿Dónde está Gastos MKT?', a: 'En la carpeta “Gastos” (' + P.gastos + ') y en SharePoint.', v: [path('Carpeta “Gastos”', P.gastos), url('Gastos MKT.xlsx', U.gastos)] },
+        { q: '¿Dónde se calcula el prorrateo?', a: 'En la pestaña “Prorrateo” de Gastos MKT.xlsx. Ahí se captura el gasto sin IVA y el prorrateo se calcula automáticamente.', v: [url('Gastos MKT.xlsx', U.gastos)] },
         { q: '¿Qué hago si la factura no aparece al buscar el folio?', a: 'Reintenta más tarde. Primero debe reflejarse en el sistema después de enviar el PDF y el XML a los dos correos de recepción.' },
         { q: '¿Qué hago si Extend no abre?', a: 'Ábrelo en una pestaña privada o ventana de incógnito; el manual indica que de otra forma no abre.' },
         { q: '¿Dónde está la información para la facturación?', a: 'En Portales MKT.xlsx, pestaña “Archivos”.', v: [url('Portales MKT.xlsx', U.portales)] }
@@ -1054,6 +1052,7 @@
       id: 'recursos', title: 'Recursos', items: [
         { proc: 'archivos-esenciales' },
         { label: 'Directorio de enlaces', href: '#/directorio', icon: 'link', match: 'directory' },
+        { label: 'Distribución de zonas', href: '#/zonas', icon: 'pin', match: 'zones' },
         { proc: 'videos-capacitacion' }
       ]
     }

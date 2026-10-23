@@ -114,6 +114,17 @@
       });
     });
 
+    add({
+      group: 'zonas', cat: 'recursos', systems: [],
+      type: 'page',
+      label: 'Tabla y buscador',
+      title: 'Sucursales por zona',
+      text: D.zones.map(function (z) { return z.name + ': ' + z.branches.join(', '); }).join(' · '),
+      kw: 'distribución zonas zona sucursal sucursales',
+      route: '#/zonas',
+      weight: 2
+    });
+
     D.resources.forEach(function (r) {
       var sys = [];
       if (r.type === 'excel') sys.push('Excel');
@@ -201,6 +212,7 @@
 
   function groupMeta(key) {
     if (key === 'directorio') return { title: 'Directorio de enlaces', href: '#/directorio', icon: 'link', meta: 'Archivos, carpetas y correos', desc: '' };
+    if (key === 'zonas') return { title: 'Distribución de zonas', href: '#/zonas', icon: 'pin', meta: 'Recursos', desc: '' };
     if (key === 'sistemas') return { title: 'Accesos y herramientas', href: '#/herramientas', icon: 'key', meta: 'Sistemas', desc: '' };
     var p = CM.procById[key];
     return {
@@ -329,7 +341,7 @@
           var p = CM.procById[h.id];
           return '<a class="sr-item sr-head" role="option" id="sr-opt-' + i + '" href="#/procedimientos/' + p.id + '">' +
             '<span class="card-icon">' + CM.icon(p.icon) + '</span><span class="sr-head-text"><span class="sr-title">' + CM.esc(p.title) + '</span>' +
-            '<span class="sr-meta">' + CM.esc(CM.catById[p.category].name) + ' · ' + CM.progress.pct(p) + ' % completado</span></span></a>';
+            '<span class="sr-meta">' + CM.esc(CM.catById[p.category].name) + '</span></span></a>';
         }).join('') + '</div>';
     }
     return html;

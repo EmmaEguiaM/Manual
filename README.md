@@ -2,7 +2,7 @@
 
 Sitio web estático (HTML, CSS y JavaScript, sin compilación ni servidor) con los procedimientos operativos del área: reportes de cotizaciones, Market Share, junta trimestral, acuerdos de venta, CRM, cambio de precios, facturación, VPN, archivos esenciales y videos.
 
-Cada procedimiento inicia desde el paso cero, incluye sus propios accesos (URL de Extend o CRM, rutas, correos), avisos, lista de verificación final y el texto original del manual.
+Cada procedimiento inicia desde el paso cero, incluye sus propios accesos (URL de Extend, CRM o Panjiva, rutas, correos), avisos, lista de verificación final y el texto original del manual. La distribución de sucursales por zona está en Recursos y en la Junta trimestral.
 
 ## Antes de publicar: seguridad
 
@@ -23,7 +23,7 @@ El contenido incluye rutas internas, direcciones de sistemas, correos y códigos
 ├── js/utils.js           Utilidades: iconos, almacenamiento local, copiar, normalización de texto
 ├── js/search.js          Índice y buscador global (Ctrl/⌘ + K)
 ├── js/navigation.js      Rutas (#/…) y menú lateral
-├── js/app.js             Vistas, progreso, vista guiada, favoritos, historial, zonas
+├── js/app.js             Vistas, vista guiada, favoritos, historial, zonas
 ├── assets/icons/         Favicon
 └── README.md
 ```
@@ -40,17 +40,17 @@ No hay dependencias externas: funciona sin conexión a servicios de terceros. To
 6. **Confirmar el funcionamiento:**
    - Busca `1017`, `EPC`, `Guadalajara` y `Tipo de cambio`; cada búsqueda debe llevar al procedimiento correcto.
    - Abre directamente `…/#/procedimientos/facturas` y recarga la página: debe seguir en Facturación.
-   - Marca un paso, recarga y verifica que el avance se conserve.
+   - Abre `…/#/zonas`, escribe “Guadalajara” y verifica que muestre la zona Occidente.
 
 ## Uso
 
 - **Buscar:** barra superior o `Ctrl + K` / `⌘ + K`. Ignora mayúsculas y acentos, y filtra por categoría y sistema. `Esc` cierra.
-- **Vista completa / vista guiada:** la guiada muestra un paso a la vez (también con las flechas ← →). Ambas comparten el progreso.
-- **Progreso, favoritos e historial:** se guardan en el `localStorage` de cada navegador. No se sincronizan entre equipos ni navegadores. “Reiniciar progreso” los borra para ese procedimiento.
-- **Imprimir procedimiento:** imprime todas las fases y pasos, aunque estés en la vista guiada.
+- **Vista completa / vista guiada:** la guiada muestra un paso a la vez (también con las flechas ← →).
+- **Favoritos e historial:** se guardan en el `localStorage` de cada navegador. No se sincronizan entre equipos ni navegadores.
+- **Distribución de zonas:** en Recursos (`#/zonas`) y dentro de la Junta trimestral; incluye un buscador de sucursales.
 - **Rutas de Windows:** se muestran como texto copiable; el navegador no puede abrir carpetas locales. El usuario `bdiazd` corresponde al equipo de referencia y puede cambiar en otros equipos.
 
-Rutas disponibles: `#/`, `#/procedimientos`, `#/procedimientos/<id>`, `#/procedimientos/<id>/paso-<n>`, `#/procedimientos/<id>/fase-<n>`, `#/categoria/<id>`, `#/favoritos`, `#/herramientas`, `#/directorio`, `#/sistemas/extend`, `#/sistemas/crm`.
+Rutas disponibles: `#/`, `#/procedimientos`, `#/procedimientos/<id>`, `#/procedimientos/<id>/paso-<n>`, `#/procedimientos/<id>/fase-<n>`, `#/categoria/<id>`, `#/favoritos`, `#/herramientas`, `#/directorio`, `#/zonas`, `#/sistemas/extend`, `#/sistemas/crm`.
 
 ## Editar o agregar procedimientos
 
@@ -61,7 +61,7 @@ Todo el contenido está en `js/procedures.js`; el menú, las tarjetas, el buscad
 3. En los textos, `**texto**` marca un botón, campo o menú literal, y `` `texto` `` un valor o código.
 4. Agrega el `id` a `ORDER` y, si debe aparecer en el menú lateral, a `MENU`.
 
-La numeración de pasos y los totales de progreso se calculan automáticamente. Si cambias el texto de un paso, el avance guardado de ese paso se reinicia.
+La numeración y el total de pasos se calculan automáticamente.
 
 ## Identidad visual
 
@@ -73,6 +73,5 @@ El manual original no especifica estos puntos; el sitio los señala sin inventar
 
 - **Actualizar información en CRM:** qué campos se actualizan, cómo se guarda y cómo se valida.
 - **Cambiar precios:** campo del precio nuevo, autorización, confirmación y comprobación; posible opción intermedia “Seleccionar” después de “Acciones”.
-- **Facturas:** dónde se calcula el prorrateo y la relación entre “Regularizar diferencias de cambio” y el tipo de impuesto.
-- **Market Share:** URL de Panjiva (consultar la pestaña “Portales” de Portales MKT.xlsx).
+- **Facturas:** la relación entre “Regularizar diferencias de cambio” y el tipo de impuesto.
 - **Junta trimestral:** ruta exacta de “Reporte de ventas”.
