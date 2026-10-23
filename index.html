@@ -10,7 +10,28 @@
   <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
+<body class="is-locked">
+  <div class="gate" id="gate" hidden>
+    <div class="gate-card">
+      <span class="gate-brand">CONSTRUMAC</span>
+      <h1 class="gate-title">Manual de procedimientos</h1>
+      <p class="gate-desc">Contenido de uso interno. Ingresa la contraseña para continuar.</p>
+      <form class="gate-form" id="gate-form" novalidate>
+        <label class="gate-label" for="gate-pass">Contraseña</label>
+        <div class="gate-field" id="gate-field">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+          <input id="gate-pass" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false" aria-describedby="gate-error">
+          <button class="icon-btn" id="gate-toggle" type="button" aria-label="Mostrar contraseña" aria-pressed="false">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <p class="gate-error" id="gate-error" role="alert"></p>
+        <label class="gate-remember"><input type="checkbox" id="gate-remember" checked> Recordar en este equipo</label>
+        <button class="btn btn--primary gate-submit" id="gate-submit" type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>
+
   <a class="skip-link" href="#contenido" data-skip>Saltar al contenido</a>
 
   <header class="topbar" role="banner">
@@ -39,7 +60,13 @@
       </button>
     </div>
     <div class="sidebar-scroll" id="sidebar-menu"></div>
-    <p class="sidebar-foot">Los favoritos y el historial se guardan solo en este navegador.</p>
+    <div class="sidebar-foot">
+      <p>Los favoritos y el historial se guardan solo en este navegador.</p>
+      <button class="sidebar-lock" id="gate-lock" type="button">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
   </nav>
 
   <main class="main" id="contenido" tabindex="-1">
@@ -79,10 +106,7 @@
     <div class="noscript">Este manual necesita JavaScript habilitado para funcionar.</div>
   </noscript>
 
-  <script src="js/procedures.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/search.js"></script>
-  <script src="js/navigation.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/procedures.enc.js"></script>
+  <script src="js/gate.js"></script>
 </body>
 </html>

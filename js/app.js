@@ -365,7 +365,7 @@
       '<header class="page-head"><span class="eyebrow">' + icon('link') + 'Recursos</span><h1>Directorio de enlaces</h1>' +
       '<p class="lead">Todos los sistemas, archivos, carpetas y correos que aparecen en los procedimientos.</p></header>' +
       '<div class="notes-stack" style="margin-bottom:20px">' +
-      noteHtml('info', 'Las rutas de Windows (C:\\Users\\…) no se pueden abrir desde el navegador: cópialas y pégalas en el Explorador de archivos. El usuario “bdiazd” corresponde al equipo de referencia y puede variar. Los enlaces de SharePoint, Extend y CRM pueden pedir inicio de sesión corporativo.') +
+      noteHtml('info', 'Las rutas de Windows (C:\\Users\\…) no se pueden abrir desde el navegador: cópialas y pégalas en el Explorador de archivos. El usuario “' + ((/Users\\([^\\]+)/.exec(D.paths.base) || [])[1] || '') + '” corresponde al equipo de referencia y puede variar. Los enlaces de SharePoint, Extend y CRM pueden pedir inicio de sesión corporativo.') +
       '</div>' +
       '<div class="dir-tools"><div class="dir-search">' + icon('search') + '<input type="search" placeholder="Filtrar por nombre, correo, ruta o URL" aria-label="Filtrar el directorio" data-dir-search autocomplete="off"></div>' +
       '<div class="filter-bar" role="group" aria-label="Filtrar por tipo">' + types.map(function (t) {
