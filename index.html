@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Manual interno de procedimientos de Construmac: reportes, acuerdos de venta, facturación, Market Share, junta trimestral, CRM, precios y VPN.">
+  <meta name="theme-color" content="#363636">
+  <title>Manual de procedimientos · Construmac</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenido" data-skip>Saltar al contenido</a>
+
+  <header class="topbar" role="banner">
+    <button class="icon-btn topbar-menu" id="nav-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Mostrar u ocultar el menú">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <a class="brand" href="#/" aria-label="Construmac · Manual de procedimientos, ir al inicio">
+      <span class="brand-mark">CONSTRUMAC</span>
+      <span class="brand-sep" aria-hidden="true"></span>
+      <span class="brand-sub">Manual de procedimientos</span>
+    </a>
+    <button class="search-trigger" id="search-open" type="button" aria-haspopup="dialog" aria-controls="search-modal">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <span class="search-trigger-text">Buscar en el manual…</span>
+      <kbd class="search-trigger-kbd" id="search-kbd">Ctrl K</kbd>
+    </button>
+  </header>
+
+  <div class="nav-overlay" id="nav-overlay" hidden></div>
+
+  <nav class="sidebar" id="sidebar" aria-label="Menú principal">
+    <div class="sidebar-head">
+      <span class="sidebar-title">Menú</span>
+      <button class="icon-btn sidebar-close" id="nav-close" type="button" aria-label="Cerrar menú">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="sidebar-scroll" id="sidebar-menu"></div>
+    <p class="sidebar-foot">El progreso, los favoritos y el historial se guardan solo en este navegador.</p>
+  </nav>
+
+  <main class="main" id="contenido" tabindex="-1">
+    <div class="view" id="view" aria-live="off"></div>
+  </main>
+
+  <div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-labelledby="search-title" hidden>
+    <div class="search-backdrop" data-search-close></div>
+    <div class="search-panel">
+      <h2 class="sr-only" id="search-title">Buscar en el manual</h2>
+      <div class="search-field">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="search-input" type="search" placeholder="¿Qué necesitas hacer?" autocomplete="off" spellcheck="false"
+          role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-label="Buscar en el manual">
+        <kbd class="search-esc">Esc</kbd>
+        <button class="icon-btn" type="button" data-search-close aria-label="Cerrar búsqueda">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="search-filters">
+        <div class="filter-row" role="group" aria-label="Filtrar por categoría" id="filter-cat"></div>
+        <div class="filter-row" role="group" aria-label="Filtrar por sistema" id="filter-sys"></div>
+      </div>
+      <p class="search-status" id="search-status" role="status" aria-live="polite"></p>
+      <div class="search-results" id="search-results" role="listbox" aria-label="Resultados"></div>
+      <div class="search-foot" aria-hidden="true">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
+        <span><kbd>Enter</kbd> abrir</span>
+        <span><kbd>Esc</kbd> cerrar</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <noscript>
+    <div class="noscript">Este manual necesita JavaScript habilitado para funcionar.</div>
+  </noscript>
+
+  <script src="js/procedures.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
